@@ -1,2 +1,2 @@
 # burekas_tirdof
-Web scanner for Israeli site inspire by Cyber-Cyber podcast. 
+Web scanner for finding vulnerabilities and information leaks from Israeli sites, inspired by Cyber-Cyber podcast.
