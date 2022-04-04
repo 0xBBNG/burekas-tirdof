@@ -4,7 +4,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-import selenium.common.exceptions
 from logos import logos
 import random
 from search_db import *
@@ -47,8 +46,8 @@ else:
 
 
 ### Driver path ###
-driver_path_mac = Service(r'/Users/hailisambrano/Coding/burekas tirdof/chromedriver_mac')
-driver_path_win = Service(r"C:\Users\haili.sambrano\Desktop\burekas tirdof\chromedriver_win.exe")
+driver_path_mac = Service(r'/Users/hailisambrano/Coding/burekas-tirdof/chromedriver_mac')
+driver_path_win = Service(r'C:\Users\haili.sambrano\Desktop\burekas tirdof\chromedriver_win.exe')
 driver_path = ""
 os_choise = ""
 print("""
@@ -75,16 +74,11 @@ while headless not in ("y", "n"):
     else:
         driver = webdriver.Chrome(service=driver_path)
 
-
 ### Viewport ###
-def set_viewport_size(driver, width, height):
-    window_size = driver.execute_script("""
-        return [window.outerWidth - window.innerWidth + arguments[0],
-          window.outerHeight - window.innerHeight + arguments[1]];
-        """, width, height)
-    driver.set_window_size(*window_size)
-set_viewport_size(driver, 800, 600)   
-print("Wiewport: " + str(driver.execute_script("return [window.innerWidth, window.innerHeight];")))
+width = 800
+height = 600
+driver.set_window_size(width, height)
+print("Wiewport: " + "[W:"+ str(width) + " H:" + str(height) + "]")
 
 ### Search Parameters ###
 google = 'https://www.google.com/'
@@ -133,6 +127,7 @@ for i in searches:
         ua = UserAgent(verify_ssl=False)
         userAgent = ua.random
         chrome_options.add_argument(f'user-agent={userAgent}')
+        print("User-Agent: " + userAgent)
 
         for element in driver.find_elements(by=By.XPATH, value='.//*[@class="g tF2Cxc"]'):
             title = ""
@@ -153,7 +148,6 @@ for i in searches:
                 print("Title: " + title)
                 print("Site URL: " + siteurl)
                 print("Description: " + description)
-                print("User-Agent: " + userAgent)
         driver.implicitly_wait(10)
 
 
