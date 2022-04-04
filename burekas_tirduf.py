@@ -67,12 +67,10 @@ headless = ""
 while headless not in ("y", "n"):
     webdriver.Chrome.close
     headless = input("Headless? (y/n): ")
+    chrome_options = Options()
     if headless != "n":
-        chrome_options = Options()
         chrome_options.add_argument("--headless")
-        driver = webdriver.Chrome(options=chrome_options, service=driver_path)
-    else:
-        driver = webdriver.Chrome(service=driver_path)
+    driver = webdriver.Chrome(options=chrome_options, service=driver_path)
 
 ### Viewport ###
 width = 800
@@ -92,11 +90,11 @@ site_il = '+site%3A.il'
 inurl_il = '+inurl%3A.il'
 urlendings = [
     site_coil,
-    # inurl_coil,
-    # site_govil,
-    # inurl_govil,
-    # site_il,
-    # inurl_il,
+    inurl_coil,
+    site_govil,
+    inurl_govil,
+    site_il,
+    inurl_il,
 ]
 
 
