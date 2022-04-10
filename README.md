@@ -9,6 +9,8 @@ Requirements:
 2. python3
 3. selenium (pip/pip3 install selenium)
 4. chromedriver (I've used version 99.0.4844.51, https://chromedriver.storage.googleapis.com/index.html)
--- In MacOS you'll need to give access to web driver:
-System Preferences > Security & Privacy > 
+-- In MacOS you'll need to give access to web driver: System Preferences > Security & Privacy
 5. fake-useragent (pip install fake-useragent)
+6. Disable Protected content: Go to the Setting in Chrome and write “site settings” in the search bar > Move into the Site settings And search for the “Protected content IDs” > Move into the protected content and disable it.
+7. Beautiful Soup (pip install beautifulsoup4)
+8. 
