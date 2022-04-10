@@ -13,4 +13,3 @@ Requirements:
 5. fake-useragent (pip install fake-useragent)
 6. Disable Protected content: Go to the Setting in Chrome and write “site settings” in the search bar > Move into the Site settings And search for the “Protected content IDs” > Move into the protected content and disable it.
 7. Beautiful Soup (pip install beautifulsoup4)
-8. 

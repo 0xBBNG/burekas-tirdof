@@ -1,4 +1,5 @@
 from genericpath import exists
+from re import search
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -15,11 +16,12 @@ from fake_useragent import UserAgent
 import os, sys
 import time,requests
 
+
 ### Intro ###
 start_message = random.choice(logos)
 time_to_sleep = random.randint(5,10)
 print(start_message)
-
+now = datetime.now()
 
 ### User choise ###
 print("""
@@ -93,7 +95,6 @@ chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_experimental_option('useAutomationExtension', False)
 chrome_options.add_argument('--disable-notifications')
 chrome_options.add_argument("--mute-audio")
-1
 
 
 ### Search Parameters ###
@@ -132,8 +133,95 @@ for i in searches:
         driver.get(search_url)
         try:
             driver.find_element(by=By.XPATH, value='//*[@id="captcha-form"]')
-            print("Check for CAPTCHA error!")
-            break
+            ### Captcha bypass ###
+            delayTime = 2
+            audioToTextDelay = 10
+            filename = '1.mp3'
+            googleIBMLink = 'https://speech-to-text-demo.ng.bluemix.net/'
+            def audioToText(mp3Path, url):
+                print("1")
+                driver.execute_script('''window.open("","_blank");''')
+                driver.switch_to.window(driver.window_handles[1])
+                print("2")
+                driver.get(googleIBMLink)
+                delayTime = 10
+                # Upload file
+                time.sleep(1)
+                print("3")
+                # Upload file
+                time.sleep(1)
+                root = driver.find_element(by=By.ID, value='root').find_element(by=By.XPATH, value='//*[@id="root"]/div')
+                btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/input')
+                btn.send_keys('{}/1.mp3'.format(root_folder))
+                # Audio to text is processing
+                time.sleep(delayTime)
+                #btn.send_keys(path)
+                print("4")
+                # Audio to text is processing
+                time.sleep(audioToTextDelay)
+                print("5")
+                text = driver.find_element(By.XPATH, '//*[@id="root"]/div/div[7]/div/div/div').find_elements(by=By.TAG_NAME, value='span')
+                print("5.1")
+                result = " ".join( [ each.text for each in text ] )
+                print("6")
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+                print("7")
+                return result
+            def saveFile(content,filename):
+                with open(filename, "wb") as handle:
+                    for data in content.iter_content():
+                        handle.write(data)
+            driver.get(search_url)
+            time.sleep(1)
+            googleClass = driver.find_elements(by=By.CLASS_NAME, value='g-recaptcha')[0]
+            time.sleep(2)
+            outeriframe = googleClass.find_element(by=By.TAG_NAME, value='iframe')
+            time.sleep(1)
+            outeriframe.click()
+            time.sleep(2)
+            allIframesLen = driver.find_elements(by=By.TAG_NAME, value='iframe')
+            time.sleep(1)
+            audioBtnFound = False
+            audioBtnIndex = -1
+            for index in range(len(allIframesLen)):
+                driver.switch_to.default_content()
+                iframe = driver.find_elements(by=By.TAG_NAME, value='iframe')[index]
+                driver.switch_to.frame(iframe)
+                driver.implicitly_wait(delayTime)
+                try:
+                    audioBtn = driver.find_element(by=By.ID, value='recaptcha-audio-button') or driver.find_element(by=By.ID, value='recaptcha-anchor')
+                    audioBtn.click()
+                    audioBtnFound = True
+                    audioBtnIndex = index
+                    break
+                except Exception as e:
+                    pass
+            if audioBtnFound:
+                try:
+                    while True:
+                        href = driver.find_element(by=By.ID, value='audio-source').get_attribute('src')
+                        response = requests.get(href, stream=True)
+                        saveFile(response,filename)
+                        response = audioToText(os.getcwd() + '/' + filename)
+                        print(response)
+                        driver.switch_to.default_content()
+                        iframe = driver.find_elements(by=By.TAG_NAME, value='iframe')[audioBtnIndex]
+                        driver.switch_to.frame(iframe)
+                        inputbtn = driver.find_element(by=By.ID, value='audio-response')
+                        inputbtn.send_keys(response)
+                        inputbtn.send_keys(Keys.ENTER)
+                        time.sleep(2)
+                        errorMsg = driver.find_elements(by=By.CLASS_NAME, value='rc-audiochallenge-error-message')[0]
+                        if errorMsg.text == "" or errorMsg.value_of_css_property('display') == 'none':
+                            print("CAPTCHA bypass Successed")
+                            break
+                except Exception as e:
+                        print(e)
+                        print('Exception Caught.')
+            else:
+                print("Check for CAPTCHA error!")
+                break
         except NoSuchElementException:
             print("=== Search ===")
             print("Search URL: " + search_url)
