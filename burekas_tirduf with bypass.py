@@ -13,7 +13,7 @@ from search_db import *
 import csv
 from datetime import datetime
 from fake_useragent import UserAgent
-import os, sys
+import os
 import time,requests
 
 
@@ -82,6 +82,7 @@ while headless not in ("y", "n"):
     chrome_options = Options()
     if headless != "n":
         chrome_options.add_argument("--headless")
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=chrome_options, service=driver_path)
 
 ### Viewport ###
@@ -137,17 +138,14 @@ for i in searches:
             delayTime = 2
             audioToTextDelay = 10
             filename = '1.mp3'
-            googleIBMLink = 'https://speech-to-text-demo.ng.bluemix.net/'
-            def audioToText(mp3Path, url):
-                print("1")
+            audio2text_site = 'https://speech-to-text-demo.ng.bluemix.net/'
+            def audioToText(mp3Path):
+                print("Bypassing Google CAPTCHA...")
                 driver.execute_script('''window.open("","_blank");''')
                 driver.switch_to.window(driver.window_handles[1])
-                print("2")
-                driver.get(googleIBMLink)
+                driver.get(audio2text_site)
                 delayTime = 10
-                # Upload file
                 time.sleep(1)
-                print("3")
                 # Upload file
                 time.sleep(1)
                 root = driver.find_element(by=By.ID, value='root').find_element(by=By.XPATH, value='//*[@id="root"]/div')
@@ -156,17 +154,12 @@ for i in searches:
                 # Audio to text is processing
                 time.sleep(delayTime)
                 #btn.send_keys(path)
-                print("4")
                 # Audio to text is processing
                 time.sleep(audioToTextDelay)
-                print("5")
                 text = driver.find_element(By.XPATH, '//*[@id="root"]/div/div[7]/div/div/div').find_elements(by=By.TAG_NAME, value='span')
-                print("5.1")
                 result = " ".join( [ each.text for each in text ] )
-                print("6")
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
-                print("7")
                 return result
             def saveFile(content,filename):
                 with open(filename, "wb") as handle:
@@ -204,7 +197,7 @@ for i in searches:
                         response = requests.get(href, stream=True)
                         saveFile(response,filename)
                         response = audioToText(os.getcwd() + '/' + filename)
-                        print(response)
+                        # print(response)
                         driver.switch_to.default_content()
                         iframe = driver.find_elements(by=By.TAG_NAME, value='iframe')[audioBtnIndex]
                         driver.switch_to.frame(iframe)
@@ -214,11 +207,11 @@ for i in searches:
                         time.sleep(2)
                         errorMsg = driver.find_elements(by=By.CLASS_NAME, value='rc-audiochallenge-error-message')[0]
                         if errorMsg.text == "" or errorMsg.value_of_css_property('display') == 'none':
-                            print("CAPTCHA bypass Successed")
+                            print("CAPTCHA bypass Failed.")
                             break
                 except Exception as e:
                         print(e)
-                        print('Exception Caught.')
+                        print('CAPTCHA bypass Successed.')
             else:
                 print("Check for CAPTCHA error!")
                 break
@@ -236,20 +229,21 @@ for i in searches:
             print("User-Agent: " + userAgent)
 
             for element in driver.find_elements(by=By.XPATH, value='.//*[@class="g tF2Cxc"]'):
-                title = ""
-                title = element.find_element(by=By.XPATH, value='.//h3').text
-                title.encode('UTF-8')
-                siteurl = element.find_element(by=By.XPATH, value='.//div[@class="yuRUbf"]/a').get_attribute('href')
-                description = ""
-                for des_element in element.find_elements(by=By.XPATH, value='.//*[@class="VwiC3b yXK7lf MUxGbd yDYNvb lyLwlc lEBKkf"]/span'):
-                    description = description + " " + des_element.text
-                    description.encode('UTF-8')
-                result_number += 1
-                if csv_choise == True:
-                    writer.writerow([title, siteurl, description, search_value, search_url])
-                if title == "":
+                try:
+                    driver.find_element(by=By.XPATH, value='//*[@id="topstuff"]/div/div/ul/li[1]1')
                     print("No Results...")
-                else:
+                except:
+                    title = ""
+                    title = element.find_element(by=By.XPATH, value='.//h3').text
+                    title.encode('UTF-8')
+                    siteurl = element.find_element(by=By.XPATH, value='.//div[@class="yuRUbf"]/a').get_attribute('href')
+                    description = ""
+                    for des_element in element.find_elements(by=By.XPATH, value='.//*[@class="VwiC3b yXK7lf MUxGbd yDYNvb lyLwlc lEBKkf"]/span'):
+                        description = description + " " + des_element.text
+                        description.encode('UTF-8')
+                    result_number += 1
+                    if csv_choise == True:
+                        writer.writerow([title, siteurl, description, search_value, search_url])
                     print("=== Result {} ===".format(result_number))
                     print("Title: " + title)
                     print("Site URL: " + siteurl)
