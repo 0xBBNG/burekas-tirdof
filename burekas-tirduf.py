@@ -1,4 +1,3 @@
-from configparser import NoSectionError
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -69,8 +68,10 @@ else:
 ### Paths ###
 driver_path_mac = Service(r'/Users/hailisambrano/Coding/burekas-tirdof/chromedriver_mac')
 driver_path_win = Service(r'C:\Users\haili.sambrano\Desktop\burekas tirdof\chromedriver_win.exe')
+driver_path_linux =  Service(r'/home/kali/burekas-tirdof/chromedriver_linux')
 root_folder_mac = r'/Users/hailisambrano/Coding/burekas-tirdof/'
 root_folder_win = r'C:\Users\haili.sambrano\Desktop\burekas tirdof'
+root_folder_linux = Service(r'/home/kali/burekas-tirdof')
 driver_path = ""
 root_folder = ""
 os_choise = ""
@@ -78,15 +79,19 @@ print("""
 Please Choose OS:
 (1) Mac
 (2) Windows
+(3) Linux
 """)
-while os_choise not in ("1", "2"):
+while os_choise not in ("1", "2", "3"):
     os_choise = input("borekas ~# ")
 if os_choise == "1":
     driver_path = driver_path_mac
     root_folder = root_folder_mac
-else:
+elif os_choise == "2":
     driver_path = driver_path_win
-    root_folder = root_folder_win
+    root_folder = root_folder_win   
+elif os_choise == "3":
+    driver_path = driver_path_linux
+    root_folder = root_folder_linux
 
 ### Headless things ###
 headless = ""

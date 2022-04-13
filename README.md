@@ -1,8 +1,9 @@
 # burekas_tirdof
-Web scanner for finding vulnerabilities and information leaks from Israeli sites, inspired by Cyber-Cyber podcast.
+Web scanner for finding vulnerabilities and information leakage in Israeli sites, inspired by Cyber-Cyber podcast.
 
 Key notes:
 1. If you want to add your own searches you will need to update "search_db.py" and maybe also the "search Parameters" section.
+2. You'll need to change the variable "driver_path_win"/"driver_path_mac" to your chrome driver full path.
 
 Requirements:
 1. MacOS / Windows

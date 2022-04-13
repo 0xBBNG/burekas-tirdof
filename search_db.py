@@ -1,14 +1,15 @@
+### Test search ###
+test_search = 'test_search'
+
 ### SQL ###
 sqldump1 = 'intitle%3A"index+of"+"dump.sql"+in+url%3A'
 sqldump2 = 'filetype%3Asql+intext%3A+"sql+dump'
 sqldump3 = 'inurl%3Awp-content%2Fuploads%2Fdump.sql'
-test_search = 'test_search'
 
 sql_searches = [
     sqldump1,
     sqldump2,
     sqldump3,
-    # test_search,
 ]
 
 ### Passwords ###
